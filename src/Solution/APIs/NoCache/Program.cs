@@ -35,10 +35,7 @@ namespace InMemoryLRU
 
         public static void Configure(WebApplication app)
         {
-            app.UseEndpoints(config =>
-            {
-                config.MapControllers();
-            });
+            app.MapControllers();
         }
     }
 }
