@@ -1,0 +1,15 @@
+name: smart-cache-demo
+services:
+  redis:
+    image: redis:6.2.6-alpine
+    ports:
+    - "6379:6379"
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+    - "1433:1433"
+    environment:
+    - "ACCEPT_EULA=Y"
+    - "SA_PASSWORD=Hello_world_777"
+    - "MSSQL_PID=Developer"
