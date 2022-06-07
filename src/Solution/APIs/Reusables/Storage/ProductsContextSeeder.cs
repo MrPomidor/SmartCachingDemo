@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bogus;
-using InMemoryLRU.Storage.Entities;
+using Reusables.Storage.Entities;
 
-namespace InMemoryLRU.Storage
+namespace Reusables.Storage
 {
     public static class ProductsContextSeeder
     {
@@ -16,7 +16,7 @@ namespace InMemoryLRU.Storage
             var fakeProductFactory = new Faker<Product>()
                 .StrictMode(true)
                 .RuleFor(x => x.Id, x => productIdCounter++)
-                .RuleFor(x => x.Name, x => x.Commerce.Product() + " " + x.Random.Guid().ToString().Substring(0,8))
+                .RuleFor(x => x.Name, x => x.Commerce.Product() + " " + x.Random.Guid().ToString().Substring(0, 8))
                 .RuleFor(x => x.Description, x => x.Commerce.ProductDescription() + " " + x.Random.Guid().ToString().Substring(0, 8))
                 .RuleFor(x => x.LongDescription, x => x.Lorem.Lines(x.Random.Number(1, 3)))
                 .RuleFor(x => x.Category, x => x.Commerce.Categories(1)[0])

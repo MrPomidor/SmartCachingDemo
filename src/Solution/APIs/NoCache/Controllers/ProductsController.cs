@@ -1,10 +1,8 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using InMemoryLRU.Controllers.Models;
-using InMemoryLRU.Storage;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Reusables.Storage;
 
 namespace InMemoryLRU.Controllers
 {
@@ -15,22 +13,6 @@ namespace InMemoryLRU.Controllers
         public ProductsController(ProductsContext dbContext)
         {
             _dbContext = dbContext;
-        }
-
-        [HttpGet("ids")]
-        public async Task<IActionResult> GetProductIds([FromQuery]int page = 1, [FromQuery]int take = 10_000, CancellationToken cancellationToken = default)
-        {
-            var count = await _dbContext.Products.LongCountAsync(cancellationToken);
-            var idsPage = await _dbContext.Products
-                .Select(x => x.Id)
-                .OrderBy(x => x)
-                .Skip((page - 1) * take).Take(take)
-                .ToArrayAsync(cancellationToken);
-            return Ok(new IdsPage
-            {
-                Items = idsPage,
-                TotalCount = count
-            });
         }
 
         [HttpGet("{id:long}")]

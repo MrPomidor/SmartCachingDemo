@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace InMemoryLRU.Storage.Entities
+namespace Reusables.Storage.Entities
 {
     public class Product
     {

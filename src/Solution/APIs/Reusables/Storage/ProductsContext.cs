@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using InMemoryLRU.Storage.Entities;
 using Microsoft.EntityFrameworkCore;
+using Reusables.Storage.Entities;
 
-namespace InMemoryLRU.Storage
+namespace Reusables.Storage
 {
     public class ProductsContext : DbContext
     {

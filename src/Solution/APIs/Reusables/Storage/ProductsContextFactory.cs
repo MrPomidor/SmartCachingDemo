@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace InMemoryLRU.Storage
+namespace Reusables.Storage
 {
     public class ProductsContextFactory : IDesignTimeDbContextFactory<ProductsContext>
     {

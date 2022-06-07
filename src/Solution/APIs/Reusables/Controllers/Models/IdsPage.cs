@@ -1,4 +1,4 @@
-﻿namespace InMemoryLRU.Controllers.Models
+﻿namespace Reusables.Controllers.Models
 {
     public class IdsPage
     {
