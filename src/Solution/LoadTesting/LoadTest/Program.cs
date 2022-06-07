@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using NBomber.Configuration;
@@ -15,7 +16,7 @@ const string baseUrl = "https://localhost:44359/api/products";
 // benchmark configuration
 
 /*
-    Estimated amount of items: 1_000_000 (one million)
+    Default amount of items: 1_000_000 (one million)
     1 percent = 10_000
     5 percent = 50_000
     10 percent = 100_000
@@ -23,6 +24,7 @@ const string baseUrl = "https://localhost:44359/api/products";
  */
 
 const int percentOfOftenRequestedItems = 1;
+const int maxItemsCount = 1_000_000;
 
 TimeSpan warmupTime = TimeSpan.FromSeconds(10);
 TimeSpan timeToRun = TimeSpan.FromMinutes(3);
@@ -31,7 +33,9 @@ TimeSpan timeToRun = TimeSpan.FromMinutes(3);
 
 var productIds = await GetProductIds();
 
-(var oftenRequestedFeed, var rareRequestedFeed) = GetIdDataFeeds(productIds, percentOfOftenRequestedItems);
+(var oftenRequestedFeed, var rareRequestedFeed) = GetIdDataFeeds(productIds, 
+    oftenRequestedItemsPercent: percentOfOftenRequestedItems, 
+    maxItems: maxItemsCount);
 
 var clientFactory = ClientFactory.Create(
     name: "http_factory",
@@ -96,6 +100,8 @@ async Task<List<long>> GetProductIds()
 
         resultIdsList.AddRange(resultParsed.Items);
 
+        pageNumber++;
+
         totalCount = resultParsed.TotalCount;
         countFetched += resultParsed.Items.LongLength;
     }
@@ -104,13 +110,33 @@ async Task<List<long>> GetProductIds()
     return resultIdsList;
 }
 
-(IFeed<long> oftenRequestedIdsFeed, IFeed<long> rareRequestIdsFeed) GetIdDataFeeds(List<long> ids, int oftenRequestedItemsPercent)
+(IFeed<long> oftenRequestedIdsFeed, IFeed<long> rareRequestIdsFeed) GetIdDataFeeds(List<long> ids, int oftenRequestedItemsPercent, int maxItems = 1_000_000)
 {
-    var oftenRequestedItemsCount = ids.Count * (oftenRequestedItemsPercent / 100);
-    var rareRequestedItemsCount = ids.Count - oftenRequestedItemsCount;
+    int oftenRequestedItemsCount = (int)(Math.Min(ids.Count, maxItems) * ((double)oftenRequestedItemsPercent / 100));
+    var rareRequestedItemsCount = Math.Min(ids.Count, maxItems) - oftenRequestedItemsCount;
 
-    var oftenRequestedItems = ids.GetRange(0, oftenRequestedItemsCount);
-    var rareRequestedItems = ids.GetRange(oftenRequestedItemsCount - 1, rareRequestedItemsCount);
+    // randomize often requested items, to exclude some of SQL optimizations
+    var random = new Random();
+    var oftenRequestedItemsSet = new HashSet<long>(oftenRequestedItemsCount);
+    for (int i = 0; i < oftenRequestedItemsCount; i++)
+    {
+        do
+        {
+            var randomId = ids[random.Next(0, ids.Count)];
+            if (oftenRequestedItemsSet.Contains(randomId))
+                continue;
+
+            oftenRequestedItemsSet.Add(randomId);
+            break;
+        }
+        while (true);
+    }
+
+    var oftenRequestedItems = oftenRequestedItemsSet.ToList();
+    var rareRequestedItems = ids.Where(x => !oftenRequestedItemsSet.Contains(x)).ToList().GetRange(0, rareRequestedItemsCount);
+
+    Console.WriteLine($"Often requested items count: {oftenRequestedItemsCount}");
+    Console.WriteLine($"Rest items count: {rareRequestedItemsCount}");
 
     var oftenRequestedDataFeed = Feed.CreateCircular("oftenRequestedItems", oftenRequestedItems);
     var rareRequestedDataFeed = Feed.CreateCircular("rareRequestedItems", rareRequestedItems);
@@ -122,7 +148,10 @@ async Task<Response> GetProduct(HttpClient client, long id, ILogger logger = nul
 {
     var response = await client.GetAsync($"{baseUrl}/{id}");
     if (response.IsSuccessStatusCode)
-        return Response.Ok(statusCode: (int)response.StatusCode);
+    {
+        var bytes = await response.Content.ReadAsByteArrayAsync();
+        return Response.Ok(payload: bytes, statusCode: (int)response.StatusCode);
+    }
     else
     {
         if (logger != null)
