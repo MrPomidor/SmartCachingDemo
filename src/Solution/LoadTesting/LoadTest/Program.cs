@@ -115,31 +115,14 @@ async Task<List<long>> GetProductIds()
     int oftenRequestedItemsCount = (int)(Math.Min(ids.Count, maxItems) * ((double)oftenRequestedItemsPercent / 100));
     var rareRequestedItemsCount = Math.Min(ids.Count, maxItems) - oftenRequestedItemsCount;
 
-    // randomize often requested items, to exclude some of SQL optimizations
-    var random = new Random();
-    var oftenRequestedItemsSet = new HashSet<long>(oftenRequestedItemsCount);
-    for (int i = 0; i < oftenRequestedItemsCount; i++)
-    {
-        do
-        {
-            var randomId = ids[random.Next(0, ids.Count)];
-            if (oftenRequestedItemsSet.Contains(randomId))
-                continue;
-
-            oftenRequestedItemsSet.Add(randomId);
-            break;
-        }
-        while (true);
-    }
-
-    var oftenRequestedItems = oftenRequestedItemsSet.ToList();
-    var rareRequestedItems = ids.Where(x => !oftenRequestedItemsSet.Contains(x)).ToList().GetRange(0, rareRequestedItemsCount);
+    var oftenRequestedItems = ids.GetRange(0, oftenRequestedItemsCount);
+    var rareRequestedItems = ids.GetRange(oftenRequestedItemsCount - 1, rareRequestedItemsCount);
 
     Console.WriteLine($"Often requested items count: {oftenRequestedItemsCount}");
     Console.WriteLine($"Rest items count: {rareRequestedItemsCount}");
 
-    var oftenRequestedDataFeed = Feed.CreateCircular("oftenRequestedItems", oftenRequestedItems);
-    var rareRequestedDataFeed = Feed.CreateCircular("rareRequestedItems", rareRequestedItems);
+    var oftenRequestedDataFeed = Feed.CreateRandom("oftenRequestedItems", oftenRequestedItems);
+    var rareRequestedDataFeed = Feed.CreateRandom("rareRequestedItems", rareRequestedItems);
 
     return (oftenRequestedDataFeed, rareRequestedDataFeed);
 }
