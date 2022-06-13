@@ -10,6 +10,10 @@ namespace Reusables.Caching
     /// </summary>
     /// <typeparam name="TKey">The type of the key to the cached item.</typeparam>
     /// <typeparam name="TValue">The type of the cached item.</typeparam>
+    /// <remarks>
+    /// Code was taken from Microsoft Bot Framework SDK: https://github.com/microsoft/botbuilder-dotnet.
+    /// Class link: https://github.com/microsoft/botbuilder-dotnet/blob/402bc02b4cbbd2f4ec359134640e99211367e4a5/libraries/AdaptiveExpressions/LRUCache.cs
+    /// </remarks>
     public sealed class LRUCache<TKey, TValue>
     {
         /// <summary>

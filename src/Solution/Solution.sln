@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reusables", "APIs\Reusables
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LRUInMemoryCache", "APIs\LRUInMemoryCache\LRUInMemoryCache.csproj", "{CC3D9FA0-B9A1-4B76-BF64-5E23989BD166}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "LoadTesting\UnitTests\UnitTests.csproj", "{9A5C91D9-04D9-4D59-9735-4AEDA6357525}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "LoadTesting\UnitTests\UnitTests.csproj", "{9A5C91D9-04D9-4D59-9735-4AEDA6357525}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

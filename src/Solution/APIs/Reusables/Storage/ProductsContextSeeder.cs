@@ -11,9 +11,15 @@ namespace Reusables.Storage
         {
             const int productsCount = 1_000_000;
 
+            var fakeProductFactory = GetFaker();
+            return fakeProductFactory.Generate(productsCount);
+        }
+
+        public static Faker<Product> GetFaker()
+        {
             long productIdCounter = 1;
 
-            var fakeProductFactory = new Faker<Product>()
+            var faker = new Faker<Product>()
                 .StrictMode(true)
                 .RuleFor(x => x.Id, x => productIdCounter++)
                 .RuleFor(x => x.Name, x => x.Commerce.Product() + " " + x.Random.Guid().ToString().Substring(0, 8))
@@ -25,8 +31,7 @@ namespace Reusables.Storage
                 .RuleFor(x => x.Tags, x => string.Join(",", x.Random.WordsArray(x.Random.Int(1, 6))))
                 .RuleFor(x => x.DateCreated, x => x.Date.Past())
                 .RuleFor(x => x.DateUpdated, (x, i) => x.Date.Between(i.DateCreated, DateTime.Now));
-
-            return fakeProductFactory.Generate(productsCount);
+            return faker;
         }
     }
 }

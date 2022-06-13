@@ -6,6 +6,10 @@ using Xunit;
 
 namespace UnitTests
 {
+    /// <remarks>
+    /// Code was taken from Microsoft Bot Framework SDK: https://github.com/microsoft/botbuilder-dotnet.
+    /// Class link: https://github.com/microsoft/botbuilder-dotnet/blob/402bc02b4cbbd2f4ec359134640e99211367e4a5/tests/AdaptiveExpressions.Tests/LRUCacheTest.cs
+    /// </remarks>
     public class LRUCacheTest
     {
         [Fact]
@@ -119,6 +123,9 @@ namespace UnitTests
         }
 
         [Fact]
+        /*
+         * Tests expiration logic. Expired items should not be fetched
+         */
         public async Task TestExpirity()
         {
             var cache = new LRUCache<int, int>(10, TimeSpan.FromMilliseconds(10));
