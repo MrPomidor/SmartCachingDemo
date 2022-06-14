@@ -83,6 +83,19 @@ namespace UnitTests
             LogTest($"Redis maxmemory was set to {maxMemoryMb} MB");
         }
 
+        /// <summary>
+        /// Test purpose - cleanup redis.
+        /// </summary>
+        [Fact(Skip = "Manual running only")]
+        public async Task ClearRedisMemory()
+        {
+            var usedMemoryBytes = await _redisManager.GetUsedMemoryBytes();
+
+            await _redisManager.ClearCache();
+
+            LogTest($"Redis cache was successfully cleared. {usedMemoryBytes * BToMb} MB cleared.");
+        }
+
         private IRedisManager GetRedisManager()
         {
             var condifurationBuilder = new ConfigurationBuilder()

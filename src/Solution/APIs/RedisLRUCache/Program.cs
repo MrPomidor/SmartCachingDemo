@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Reusables.DI;
 using Reusables.Storage;
 
-namespace LRUInMemoryCache
+namespace RedisLRUCache
 {
     public class Program
     {
@@ -33,7 +33,7 @@ namespace LRUInMemoryCache
                 optionsBuilder.UseSqlServer(config.GetConnectionString("ProductsDB"));
             });
 
-            services.AddInMemoryCache();
+            services.AddRedisCache();
         }
 
         public static void Configure(WebApplication app)
