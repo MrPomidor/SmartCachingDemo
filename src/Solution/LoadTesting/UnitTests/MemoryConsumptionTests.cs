@@ -1,5 +1,5 @@
 ﻿using System;
-using Reusables.Caching;
+using Reusables.Caching.InMemory;
 using Reusables.Storage;
 using Reusables.Storage.Entities;
 using Xunit;
@@ -20,6 +20,7 @@ namespace UnitTests
         }
 
         /// <summary>
+        /// Tests approximate amount of managed memory, consumed by LRU cache.
         /// This test always pass. Check test log in console or test runner to see memory consumption
         /// </summary>
         [Theory]

@@ -1,8 +1,9 @@
-using LRUInMemoryCache.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Reusables.Caching;
+using Reusables.Caching.InMemory;
 using Reusables.Storage;
 
 namespace LRUInMemoryCache
@@ -33,7 +34,7 @@ namespace LRUInMemoryCache
                 optionsBuilder.UseSqlServer(config.GetConnectionString("ProductsDB"));
             });
 
-            services.AddSingleton<IProductsCache, ProductsCache>();
+            services.AddSingleton<IProductsCache, ProductsInMemoryCache>();
         }
 
         public static void Configure(WebApplication app)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Reusables.Caching
+namespace Reusables.Caching.InMemory
 {
     // TODO add counters to track how often Touch is called
 
@@ -68,7 +68,7 @@ namespace Reusables.Caching
                         _cacheList.Remove(entry.Node);
                         _cacheMap.Remove(key);
 
-                        value = default(TValue);
+                        value = default;
                         return false;
                     }
 
@@ -78,7 +78,7 @@ namespace Reusables.Caching
                 }
             }
 
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -135,9 +135,9 @@ namespace Reusables.Caching
 
             public Entry(LinkedListNode<TKey> node, TValue value, DateTime dateAdded)
             {
-                this.Node = node;
-                this.Value = value;
-                this.DateAdded = dateAdded;
+                Node = node;
+                Value = value;
+                DateAdded = dateAdded;
             }
         }
     }

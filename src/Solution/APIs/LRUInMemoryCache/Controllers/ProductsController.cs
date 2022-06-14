@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using System.Threading;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Reusables.Storage;
 using Microsoft.EntityFrameworkCore;
-using LRUInMemoryCache.Services;
+using Reusables.Caching;
+using Reusables.Storage;
 
 namespace LRUInMemoryCache.Controllers
 {
@@ -24,14 +24,15 @@ namespace LRUInMemoryCache.Controllers
         [HttpGet("{id:long}")]
         public async Task<IActionResult> GetProduct(long id, CancellationToken cancellationToken = default)
         {
-            if (_productsCache.TryGet(id, out var product))
+            var product = await _productsCache.TryGet(id);
+            if (product != null)
                 return Ok(product);
 
             product = await _dbContext.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (product == null)
                 return NotFound();
 
-            _productsCache.Set(id, product);
+            await _productsCache.Set(id, product);
 
             return Ok(product);
         }

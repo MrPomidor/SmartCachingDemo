@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Reusables.Caching;
+using Reusables.Caching.InMemory;
 using Xunit;
 
 namespace UnitTests
