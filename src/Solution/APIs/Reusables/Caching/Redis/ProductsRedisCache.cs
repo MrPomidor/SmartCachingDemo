@@ -28,15 +28,20 @@ namespace Reusables.Caching.Redis
             var valueSerialized = _serializer.Serialize(value);
 
             await _redisManager.SetValue(key, valueSerialized, TTL);
+            ProductsRedisCacheEventSource.Log.ItemAdded();
         }
 
         public async ValueTask<Product> TryGet(long productId)
         {
             var redisValue = await _redisManager.GetValue(GetKey(productId));
             if (!redisValue.HasValue)
+            {
+                ProductsRedisCacheEventSource.Log.ItemNotFound();
                 return null;
+            }
 
             var valueDeserialized = _serializer.Deserialize<Product>(redisValue);
+            ProductsRedisCacheEventSource.Log.ItemFetched();
             return valueDeserialized;
         }
 

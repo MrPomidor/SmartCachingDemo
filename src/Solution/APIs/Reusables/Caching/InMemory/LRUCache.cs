@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace Reusables.Caching.InMemory
 {
-    // TODO add counters to track how often Touch is called
-
     /// <summary>
     /// A least-recently-used cache stored like a dictionary.
     /// </summary>
@@ -67,6 +65,7 @@ namespace Reusables.Caching.InMemory
                     {
                         _cacheList.Remove(entry.Node);
                         _cacheMap.Remove(key);
+                        LRUCacheEventSource.Log.ItemExpired();
 
                         value = default;
                         return false;
@@ -74,11 +73,13 @@ namespace Reusables.Caching.InMemory
 
                     Touch(entry.Node);
                     value = entry.Value;
+                    LRUCacheEventSource.Log.ItemFetched();
                     return true;
                 }
             }
 
             value = default;
+            LRUCacheEventSource.Log.ItemNotFound();
             return false;
         }
 
@@ -108,6 +109,7 @@ namespace Reusables.Caching.InMemory
 
                     _cacheList.AddFirst(node);
                     _cacheMap.Add(key, new Entry(node, value, DateTime.Now));
+                    LRUCacheEventSource.Log.ItemAdded();
                 }
                 else
                 {
