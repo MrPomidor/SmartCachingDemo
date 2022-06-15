@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Reusables.Caching.InMemory;
 using Reusables.Storage.Entities;
 using Reusables.Utils;
 using StackExchange.Redis;
@@ -33,6 +34,8 @@ namespace Reusables.Caching.Redis
 
         public async ValueTask<Product> TryGet(long productId)
         {
+            ProductsRedisCacheEventSource.Log.ItemRequested();
+
             var redisValue = await _redisManager.GetValue(GetKey(productId));
             if (!redisValue.HasValue)
             {

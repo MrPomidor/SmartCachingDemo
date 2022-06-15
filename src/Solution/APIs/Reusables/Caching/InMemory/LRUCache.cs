@@ -57,6 +57,8 @@ namespace Reusables.Caching.InMemory
         /// <returns>true if contains an element with the specified key; otherwise, false.</returns>
         public bool TryGet(TKey key, out TValue value)
         {
+            LRUCacheEventSource.Log.ItemRequested();
+
             lock (_lockObj)
             {
                 if (_cacheMap.TryGetValue(key, out var entry))

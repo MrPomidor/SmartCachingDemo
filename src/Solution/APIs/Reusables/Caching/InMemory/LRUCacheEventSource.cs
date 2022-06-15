@@ -12,30 +12,36 @@ namespace Reusables.Caching.InMemory
         private IncrementingEventCounter _fetchCounter;
         private IncrementingEventCounter _expiredCounter;
         private IncrementingEventCounter _notFoundCounter;
+        private IncrementingEventCounter _requestedCounter;
 
         public LRUCacheEventSource()
         {
 
         }
 
+        public void ItemRequested()
+        {
+            _requestedCounter?.Increment();
+        }
+
         public void ItemAdded()
         {
-            _addedCounter.Increment();
+            _addedCounter?.Increment();
         }
 
         public void ItemFetched()
         {
-            _fetchCounter.Increment();
+            _fetchCounter?.Increment();
         }
 
         public void ItemExpired()
         {
-            _expiredCounter.Increment();
+            _expiredCounter?.Increment();
         }
 
         public void ItemNotFound()
         {
-            _notFoundCounter.Increment();
+            _notFoundCounter?.Increment();
         }
 
         protected override void OnEventCommand(EventCommandEventArgs command)
@@ -46,6 +52,7 @@ namespace Reusables.Caching.InMemory
                 _fetchCounter ??= new IncrementingEventCounter(CountersConsts.Metrics.InMemoryLRUProductsCache.FetchCount, this);
                 _expiredCounter ??= new IncrementingEventCounter(CountersConsts.Metrics.InMemoryLRUProductsCache.ExpireCount, this);
                 _notFoundCounter ??= new IncrementingEventCounter(CountersConsts.Metrics.InMemoryLRUProductsCache.NotFoundCount, this);
+                _requestedCounter ??= new IncrementingEventCounter(CountersConsts.Metrics.InMemoryLRUProductsCache.RequestedCount, this);
             }
         }
 
@@ -62,6 +69,9 @@ namespace Reusables.Caching.InMemory
 
             _notFoundCounter?.Dispose();
             _notFoundCounter = null;
+
+            _requestedCounter?.Dispose();
+            _requestedCounter = null;
 
             base.Dispose(disposing);
         }

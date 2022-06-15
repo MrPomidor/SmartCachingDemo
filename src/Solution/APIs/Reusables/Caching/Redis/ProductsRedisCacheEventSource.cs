@@ -11,25 +11,31 @@ namespace Reusables.Caching.Redis
         private IncrementingEventCounter _addedCounter;
         private IncrementingEventCounter _fetchCounter;
         private IncrementingEventCounter _notFoundCounter;
+        private IncrementingEventCounter _itemRequestedCounter;
 
         public ProductsRedisCacheEventSource()
         {
 
         }
 
+        public void ItemRequested()
+        {
+            _itemRequestedCounter?.Increment();
+        }
+
         public void ItemAdded()
         {
-            _addedCounter.Increment();
+            _addedCounter?.Increment();
         }
 
         public void ItemFetched()
         {
-            _fetchCounter.Increment();
+            _fetchCounter?.Increment();
         }
 
         public void ItemNotFound()
         {
-            _notFoundCounter.Increment();
+            _notFoundCounter?.Increment();
         }
 
         protected override void OnEventCommand(EventCommandEventArgs command)
@@ -39,6 +45,7 @@ namespace Reusables.Caching.Redis
                 _addedCounter ??= new IncrementingEventCounter(CountersConsts.Metrics.RedisLRUProductsCache.AddCount, this);
                 _fetchCounter ??= new IncrementingEventCounter(CountersConsts.Metrics.RedisLRUProductsCache.FetchCount, this);
                 _notFoundCounter ??= new IncrementingEventCounter(CountersConsts.Metrics.RedisLRUProductsCache.NotFoundCount, this);
+                _itemRequestedCounter ??= new IncrementingEventCounter(CountersConsts.Metrics.RedisLRUProductsCache.RequestedCount, this);
             }
         }
 
@@ -52,6 +59,9 @@ namespace Reusables.Caching.Redis
 
             _notFoundCounter?.Dispose();
             _notFoundCounter = null;
+
+            _itemRequestedCounter?.Dispose();
+            _itemRequestedCounter = null;
 
             base.Dispose(disposing);
         }

@@ -12,6 +12,7 @@
         {
             public static class InMemoryLRUProductsCache
             {
+                public const string RequestedCount = "requested-count"; // amount of all "get" calls
                 public const string FetchCount = "fetch-count"; // amount of "matches", when item was successfully fetched from cache
                 public const string AddCount = "add-count"; // amount of items added to cache
                 public const string ExpireCount = "expire-count"; // amount of items fetched from cache, but expired
@@ -20,6 +21,7 @@
 
             public static class RedisLRUProductsCache
             {
+                public const string RequestedCount = "requested-count"; // amount of all "get" calls
                 public const string AddCount = "add-count"; // amount of items added to cache
                 public const string FetchCount = "fetch-count"; // amount of "matches", when item was successfully fetched from cache
                 public const string NotFoundCount = "notfound-count"; // amount of not successful get requests
