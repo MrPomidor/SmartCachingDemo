@@ -4,12 +4,26 @@ namespace CountersMonitor
 {
     public class CountersStats
     {
-        public ConcurrentDictionary<string, CountersStatsItem> CounterValues { get; private set; } = new ConcurrentDictionary<string, CountersStatsItem>();
-        public void AddMetric(string key, long value)
+        private ConcurrentDictionary<string, CountersStatsItem> _counterValues { get; set; } = new ConcurrentDictionary<string, CountersStatsItem>();
+
+        public void AddMetric(string providerName, string metric, long value)
         {
-            CounterValues.AddOrUpdate(key, new CountersStatsItem { Value = value }, (key, old) => old.Add(value));
+            _counterValues.AddOrUpdate(GetKey(providerName, metric), new CountersStatsItem { Value = value }, (key, old) => old.Add(value));
         }
-        // TODO probably add GET method too
+
+        public long GetMetric(string providerName, string metric)
+        {
+            if (_counterValues.TryGetValue(GetKey(providerName, metric), out var stats))
+                return stats.Value;
+            return 0;
+        }
+
+        public IEnumerable<(string metric, long value)> GetProviderMetrics(string providerName) => _counterValues
+            .Where(x => x.Key.StartsWith(providerName))
+            .Select(x => (GetMetric(x.Key), x.Value.Value));
+
+        private string GetKey(string providerName, string metric) => $"{providerName}/{metric}";
+        private string GetMetric(string key) => key.Split('/', StringSplitOptions.RemoveEmptyEntries)[1];
     }
 
     public class CountersStatsItem

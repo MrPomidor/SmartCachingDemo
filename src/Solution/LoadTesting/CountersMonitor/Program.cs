@@ -1,9 +1,4 @@
-﻿using System.Diagnostics;
-using System.Threading;
-using Microsoft.Diagnostics.Tracing.Parsers;
-using Microsoft.Diagnostics.Tracing.Session;
-
-namespace CountersMonitor
+﻿namespace CountersMonitor
 {
     public partial class Program
     {
@@ -14,6 +9,9 @@ namespace CountersMonitor
             try
             {
                 Run();
+
+                Console.WriteLine("Press any key ...");
+                Console.ReadKey();
             }
             catch(ApplicationException appEx)
             {
@@ -34,9 +32,7 @@ namespace CountersMonitor
 
         static void Run()
         {
-            (var processId, var processName) = ProcessFetcher.Instance.GetDemoProcess();
-            Console.WriteLine($"Found process '{processName}' with ProcessID:{processId}");
-            Console.WriteLine(new string('-', 30));
+            (var processId, var demoType) = ProcessFetcher.Instance.GetDemoProcess();
 
             CountersStats stats;
             using (var statsCollector = new StatsCollector(processId))
@@ -44,15 +40,7 @@ namespace CountersMonitor
                 stats = statsCollector.CollectStats(CollectionTime);
             }
 
-            // TODO handle collected stats
-            // TODO this is draft
-            foreach (var metric in stats.CounterValues.Keys)
-            {
-                Console.WriteLine($"{metric}: {stats.CounterValues[metric].Value}");
-            }
-
-            Console.WriteLine("Press any key ...");
-            Console.ReadKey();
+            StatsHandler.Instance.Handle(stats, demoType);
         }
     }
 }

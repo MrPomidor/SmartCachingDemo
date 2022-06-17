@@ -7,7 +7,14 @@ using Microsoft.Diagnostics.Tracing;
 
 namespace CountersMonitor
 {
-    // TODO add note where it was copied from
+    /// <summary>
+    /// Code which collect stats was copied from/inspired by `dotnet-counters` tool source code. 
+    /// Stats collector repeats some code, which is used by 'monitor' command.
+    /// Source code could be found in this repository: https://github.com/dotnet/diagnostics/tree/main/src/Tools/dotnet-counters
+    /// More on reading data from counters out-of-proc you can read in next articles: 
+    /// https://github.com/dotnet/diagnostics/blob/main/documentation/design-docs/eventcounters.md
+    /// https://github.com/dotnet/diagnostics/blob/c13a550fd8135e031678015743557ea2a543403f/documentation/design-docs/diagnostics-client-library.md
+    /// </summary>
     public class StatsCollector : IDisposable
     {
         private int _processId;
@@ -155,11 +162,13 @@ namespace CountersMonitor
                 var name = payloadFields["Name"].ToString();
                 var increment = (double)payloadFields["Increment"];
 
-                stats.AddMetric($"{obj.ProviderName}/{name}", (long)increment);
+                stats.AddMetric(obj.ProviderName, name, (long)increment);
             }
         }
 
-        // TODO add note where it was copied from ?
+        /// <summary>
+        /// https://github.com/dotnet/diagnostics/blob/0bcc6110ea09bdd83d6ad637a175b0f86f0191d0/src/Tools/dotnet-counters/CounterMonitor.cs#L770
+        /// </summary>
         private EventPipeProvider[] GetEventPipeProviders(IEnumerable<string> providers, string sessionId)
         {
             var interval = 1;
