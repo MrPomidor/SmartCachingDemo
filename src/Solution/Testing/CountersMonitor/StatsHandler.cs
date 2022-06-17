@@ -1,4 +1,5 @@
-﻿using Contracts.Monitoring;
+﻿using System;
+using Contracts.Monitoring;
 
 namespace CountersMonitor
 {

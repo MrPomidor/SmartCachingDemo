@@ -1,6 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Tracing;
+using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Contracts.Monitoring;
 using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tracing;
@@ -17,10 +22,10 @@ namespace CountersMonitor
     /// </summary>
     public class StatsCollector : IDisposable
     {
-        private int _processId;
+        private readonly int _processId;
 
-        private EventPipeSession? _session;
-        private CancellationTokenSource? _cancellationTokenSource;
+        private EventPipeSession _session;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public StatsCollector(int processId)
         {
@@ -185,7 +190,7 @@ namespace CountersMonitor
             {
                 if (metrics.Length != 0)
                 {
-                    metrics.Append(",");
+                    metrics.Append(',');
                 }
                 metrics.Append(provider);
             }

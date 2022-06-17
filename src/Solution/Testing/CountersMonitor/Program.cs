@@ -1,4 +1,6 @@
-﻿namespace CountersMonitor
+﻿using System;
+
+namespace CountersMonitor
 {
     public partial class Program
     {

@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using Microsoft.Diagnostics.NETCore.Client;
 
 namespace CountersMonitor
@@ -46,17 +48,17 @@ namespace CountersMonitor
                 throw new ApplicationException("Conflicting demo applications are running. Please, terminate one of demo processes to collect statistics !");
 
             var process = supposedProcesses.Single();
-            Console.WriteLine($"Found process '{process!.ProcessName}' with ProcessID:{process!.Id}");
+            Console.WriteLine($"Found process '{process.ProcessName}' with ProcessID:{process.Id}");
             Console.WriteLine(new string('-', 30));
 
-            var demoType = process!.ProcessName.Contains(LRUInMemoryCache) ?
+            var demoType = process.ProcessName.Contains(LRUInMemoryCache) ?
                 DemoTypes.InMemoryLRU :
                 DemoTypes.RedisLRU;
 
-            return (process!.Id, demoType);
+            return (process.Id, demoType);
         }
 
-        private Process? GetProcessById(int processId)
+        private Process GetProcessById(int processId)
         {
             try
             {
