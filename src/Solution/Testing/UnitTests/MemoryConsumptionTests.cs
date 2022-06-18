@@ -53,14 +53,14 @@ namespace UnitTests
             GC.WaitForFullGCComplete();
             var memoryAfterBytes = GC.GetTotalAllocatedBytes(true);
 
-            LogTest(@$"Testing memory consumption for LRU cache with Product entity with capacity {capacity}:
+            Log(@$"Testing memory consumption for LRU cache with Product entity with capacity {capacity}:
                 Memory before allocation: {memoryBeforeBytes * BToMb} MB ({memoryBeforeBytes} BYTES)
                 Memory after allocation: {memoryAfterBytes * BToMb} MB ({memoryAfterBytes} BYTES)
                 Approximate items size: {(memoryAfterBytes - memoryBeforeBytes) * BToMb} MB ({memoryAfterBytes - memoryBeforeBytes} BYTES)
             ");
         }
 
-        private void LogTest(string message)
+        private void Log(string message)
         {
             _output.WriteLine(message);
         }

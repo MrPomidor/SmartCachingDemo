@@ -59,7 +59,7 @@ namespace UnitTests
 
             // assert
             var usedMemoryAfterBytes = await _redisManager.GetUsedMemoryBytes();
-            LogTest($@"Testing memory consumption in Redis for Product entity with items count: {elementsCount}
+            Log($@"Testing memory consumption in Redis for Product entity with items count: {elementsCount}
                 Used memory before: {usedMemoryBeforeBytes * BToMb} MB ({usedMemoryBeforeBytes} BYTES)
                 Used memory after: {usedMemoryAfterBytes * BToMb} MB ({usedMemoryAfterBytes} BYTES)
                 Approximate memory taken in Redis: {(usedMemoryAfterBytes - usedMemoryBeforeBytes) * BToMb} MB ({usedMemoryAfterBytes - usedMemoryBeforeBytes} BYTES)
@@ -80,7 +80,7 @@ namespace UnitTests
 
             await _redisManager.SetMaxMemory(maxMemoryMb);
 
-            LogTest($"Redis maxmemory was set to {maxMemoryMb} MB");
+            Log($"Redis maxmemory was set to {maxMemoryMb} MB");
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace UnitTests
 
             await _redisManager.ClearCache();
 
-            LogTest($"Redis cache was successfully cleared. {usedMemoryBytes * BToMb} MB cleared.");
+            Log($"Redis cache was successfully cleared. {usedMemoryBytes * BToMb} MB cleared.");
         }
 
         private IRedisManager GetRedisManager()
@@ -109,7 +109,7 @@ namespace UnitTests
             return redisManager;
         }
 
-        private void LogTest(string message)
+        private void Log(string message)
         {
             _output.WriteLine(message);
         }
