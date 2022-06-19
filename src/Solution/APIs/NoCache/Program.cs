@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Reusables.Storage;
+using Reusables.DI;
 
 namespace InMemoryLRU
 {
@@ -27,10 +26,8 @@ namespace InMemoryLRU
                     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
                     );
 
-            services.AddDbContext<ProductsContext>((optionsBuilder) =>
-             {
-                 optionsBuilder.UseSqlServer(config.GetConnectionString("ProductsDB"));
-             });
+            services.AddDb(config);
+            services.AddProductStatsCollection();
         }
 
         public static void Configure(WebApplication app)

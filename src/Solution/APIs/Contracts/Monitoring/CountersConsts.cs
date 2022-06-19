@@ -6,6 +6,7 @@
         {
             public const string InMemoryLRUProductsCache = "LRUDemo.Products.LRUCache.InMemory";
             public const string RedisLRUProductsCache = "LRUDemo.Products.LRUCache.Redis";
+            public const string ProductsRequestStats = "LRUDemo.Products.RequestStats";
         }
 
         public static class Metrics
@@ -25,6 +26,23 @@
                 public const string AddCount = "add-count"; // amount of items added to cache
                 public const string FetchCount = "fetch-count"; // amount of "matches", when item was successfully fetched from cache
                 public const string NotFoundCount = "notfound-count"; // amount of not successful get requests
+            }
+
+            public static class ProductsRequestStats
+            {
+                public const string RequestQuota_5Percent = "requestquota-five-percents";
+                public const string RequestQuota_10Percent = "requestquota-ten-percents";
+                public const string RequestQuota_15Percent = "requestquota-fifteen-percents";
+                public const string RequestQuota_20Percent = "requestquota-twenty-percents";
+                public const string RequestQuota_30Percent = "requestquota-thirty-percents";
+                public const string RequestQuota_50Percent = "requestquota-fifty-percents";
+
+                public const string RequestQuota_FromTotal_5Percent =  "requestquota-fromtotal-five-percents";
+                public const string RequestQuota_FromTotal_10Percent = "requestquota-fromtotal-ten-percents";
+                public const string RequestQuota_FromTotal_15Percent = "requestquota-fromtotal-fifteen-percents";
+                public const string RequestQuota_FromTotal_20Percent = "requestquota-fromtotal-twenty-percents";
+                public const string RequestQuota_FromTotal_30Percent = "requestquota-fromtotal-thirty-percents";
+                public const string RequestQuota_FromTotal_50Percent = "requestquota-fromtotal-fifty-percents";
             }
         }
     }

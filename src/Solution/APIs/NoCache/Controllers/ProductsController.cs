@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Reusables.Monitoring;
 using Reusables.Storage;
 
 namespace InMemoryLRU.Controllers
@@ -10,9 +11,11 @@ namespace InMemoryLRU.Controllers
     public class ProductsController : Controller
     {
         private readonly ProductsContext _dbContext;
-        public ProductsController(ProductsContext dbContext)
+        private readonly IProductsStatsAggregator _productsStatsAggregator;
+        public ProductsController(ProductsContext dbContext, IProductsStatsAggregator productsStatsAggregator)
         {
             _dbContext = dbContext;
+            _productsStatsAggregator = productsStatsAggregator;
         }
 
         [HttpGet("{id:long}")]
@@ -21,6 +24,8 @@ namespace InMemoryLRU.Controllers
             var product = await _dbContext.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (product == null)
                 return NotFound();
+
+            _productsStatsAggregator.ProductRequested(id);
             return Ok(product);
         }
     }

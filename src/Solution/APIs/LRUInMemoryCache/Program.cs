@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Reusables.DI;
-using Reusables.Storage;
 
 namespace LRUInMemoryCache
 {
@@ -28,11 +26,7 @@ namespace LRUInMemoryCache
                     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
                     );
 
-            services.AddDbContext<ProductsContext>((optionsBuilder) =>
-            {
-                optionsBuilder.UseSqlServer(config.GetConnectionString("ProductsDB"));
-            });
-
+            services.AddDb(config);
             services.AddInMemoryCache();
         }
 
