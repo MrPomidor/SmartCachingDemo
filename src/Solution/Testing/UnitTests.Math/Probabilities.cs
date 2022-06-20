@@ -31,6 +31,8 @@ namespace UnitTests.Math
          */
         [InlineData(5_000, 50, 0.5)] // 0.0002 - all items have equal probability (uniform distribution)
         [InlineData(5_000, 20, 0.8)] // 0.0008 - 20 percent of items have 80 percent probability (Pareto distribution)
+
+        [InlineData(1_000_000, 20, 77.93)] // 0.0003897
         public void CalculateItemAppearanceProbability(int totalItems, int oftenRequestedGroupSizePercent, double oftenRequestedGroupProbability)
         {
             // 1 = oftenRequestedGroupProbability + rareRequestedGroupProbability
@@ -55,10 +57,13 @@ namespace UnitTests.Math
         /// Then you will need cache size from 1250 to 3749 items, which is less then 5000, so it makes sense.
         /// </remarks>
         [Theory]
-        [InlineData(2, 0.0002)] // 5001-14999 - greater then amount of items in set, does not make sense to apply LRU cache (uniform distribution)
-        [InlineData(2, 0.0008)] // 1250-3749 - less then amount of items in set, makes sense to apply LRU cache (Pareto distribution)
-        [InlineData(3, 0.0002)] // 10001-19999 - greater then amount of items in set, does not make sense to apply LRU cache (uniform distribution)
-        [InlineData(3, 0.0008)] // 2500-4999 - less then amount of items in set, makes sense to apply LRU cache (Pareto distribution)
+        [InlineData(2, 0.0002)] // 5001-14999 - greater then amount of items in set (5000), does not make sense to apply LRU cache
+        [InlineData(2, 0.0008)] // 1250-3749 - less then amount of items in set (5000), makes sense to apply LRU cache
+        [InlineData(3, 0.0002)] // 10001-19999 - greater then amount of items in set (5000), does not make sense to apply LRU cache
+        [InlineData(3, 0.0008)] // 2500-4999 - less then amount of items in set (5000), makes sense to apply LRU cache
+
+        [InlineData(2, 0.0003897)] // 2567-7693 - less then amount of items in set (1_000_000), makes sense to apply LRU cache
+        [InlineData(3, 0.0003897)] // 5133-10263 - less then amount of items in set (1_000_000), makes sense to apply LRU cache
         public void CalculateNumberOfTakesForMatchCount(int desiredNumberOfMatches, double successProbability)
         {
             // np - (1 - p) < T
@@ -88,8 +93,10 @@ namespace UnitTests.Math
         /*
          * Assume we have 5_000 total takes for some event. Event probability is 0.0002. What is the most probable amount of matches ?
          */
-        [InlineData(5_000, 0.0002)] // 0 - 2 (uniform distribution)
-        [InlineData(5_000, 0.0008)] // 3 - 5 (Pareto distribution)
+        [InlineData(5_000, 0.0002)] // 0 - 2
+        [InlineData(5_000, 0.0008)] // 3 - 5
+
+        [InlineData(10_000, 0.0003897)] // 2 - 4
         public void CalculateMostProbableMatchCount(int totalItems, double successProbability)
         {
             // np - (1 - p) < T

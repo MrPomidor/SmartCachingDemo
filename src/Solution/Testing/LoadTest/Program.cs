@@ -1,7 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using NBomber.Configuration;
@@ -27,7 +26,7 @@ const int percentOfOftenRequestedItems = 1;
 const int maxItemsCount = 1_000_000;
 
 TimeSpan warmupTime = TimeSpan.FromSeconds(10);
-TimeSpan timeToRun = TimeSpan.FromMinutes(3);
+TimeSpan timeToRun = TimeSpan.FromMinutes(10);
 
 
 
