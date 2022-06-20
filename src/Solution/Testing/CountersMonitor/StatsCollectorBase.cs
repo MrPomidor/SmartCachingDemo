@@ -6,12 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Contracts.Monitoring;
 using Microsoft.Diagnostics.NETCore.Client;
 using Microsoft.Diagnostics.Tracing;
 
 namespace CountersMonitor
 {
+    // TODO add disposed bool, to indicate collection completed and cannot use anymore
+
     /// <summary>
     /// Code which collect stats was copied from/inspired by `dotnet-counters` tool source code. 
     /// Stats collector repeats some code, which is used by 'monitor' command.
@@ -20,25 +21,26 @@ namespace CountersMonitor
     /// https://github.com/dotnet/diagnostics/blob/main/documentation/design-docs/eventcounters.md
     /// https://github.com/dotnet/diagnostics/blob/c13a550fd8135e031678015743557ea2a543403f/documentation/design-docs/diagnostics-client-library.md
     /// </summary>
-    public class StatsCollector : IDisposable
+    public abstract class StatsCollectorBase<TStats> : IDisposable
+        where TStats : new()
     {
         private readonly int _processId;
 
         private EventPipeSession _session;
         private CancellationTokenSource _cancellationTokenSource;
 
-        public StatsCollector(int processId)
+        protected StatsCollectorBase(int processId)
         {
             _processId = processId;
         }
 
-        public CountersStats CollectStats(TimeSpan collectionTime)
+        public TStats CollectStats(TimeSpan collectionTime)
         {
             Console.WriteLine($"Start collecting stats for ProcessID:{_processId}");
             Console.WriteLine($"Stats will be collected during next {collectionTime.Minutes} minutes, {collectionTime.Seconds} seconds");
             Console.WriteLine("To stop collection earlier - press 'Q'");
 
-            var stats = new CountersStats();
+            var stats = new TStats();
 
             _cancellationTokenSource = new CancellationTokenSource();
 
@@ -91,18 +93,14 @@ namespace CountersMonitor
             return stats;
         }
 
-        private static readonly string[] DemoProviderNames = new[]
-        {
-            CountersConsts.EventSources.InMemoryLRUProductsCache,
-            CountersConsts.EventSources.RedisLRUProductsCache
-        };
+        protected abstract string[] GetProviderNames(); 
 
-        private Task CreateListenerTask(int processId, CountersStats stats, CancellationTokenSource cancellationTokenSource)
+        private Task CreateListenerTask(int processId, TStats stats, CancellationTokenSource cancellationTokenSource)
         {
             return new Task(() =>
             {
                 var sessionId = Guid.NewGuid().ToString();
-                var providers = GetEventPipeProviders(DemoProviderNames, sessionId);
+                var providers = GetEventPipeProviders(GetProviderNames(), sessionId);
 
                 var client = new DiagnosticsClient(processId);
 
@@ -140,7 +138,7 @@ namespace CountersMonitor
             });
         }
 
-        private Action<TraceEvent> GetTraceEventHandler(CountersStats stats, CancellationToken cancellationToken)
+        private Action<TraceEvent> GetTraceEventHandler(TStats stats, CancellationToken cancellationToken)
         {
             return (TraceEvent obj) =>
             {
@@ -154,22 +152,7 @@ namespace CountersMonitor
             };
         }
 
-        private void HandleDiagnosticCounter(TraceEvent obj, CountersStats stats)
-        {
-            IDictionary<string, object> payloadVal = (IDictionary<string, object>)(obj.PayloadValue(0));
-            IDictionary<string, object> payloadFields = (IDictionary<string, object>)(payloadVal["Payload"]);
-
-            // If it's not a counter we asked for, ignore it.
-            if (!DemoProviderNames.Contains(obj.ProviderName)) return;
-
-            if (payloadFields["CounterType"].Equals("Sum"))
-            {
-                var name = payloadFields["Name"].ToString();
-                var increment = (double)payloadFields["Increment"];
-
-                stats.AddMetric(obj.ProviderName, name, (long)increment);
-            }
-        }
+        protected abstract void HandleDiagnosticCounter(TraceEvent obj, TStats stats);
 
         /// <summary>
         /// https://github.com/dotnet/diagnostics/blob/0bcc6110ea09bdd83d6ad637a175b0f86f0191d0/src/Tools/dotnet-counters/CounterMonitor.cs#L770

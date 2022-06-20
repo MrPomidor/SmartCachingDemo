@@ -14,15 +14,14 @@ namespace CountersMonitor
     {
         private const string LRUInMemoryCache = "LRUInMemoryCache";
         private const string RedisLRUCache = "RedisLRUCache";
+        private const string NoCache = "NoCache";
+
         private static readonly string[] SupposedProcessNames = new[]
         {
             LRUInMemoryCache,
-            RedisLRUCache
+            RedisLRUCache,
+            NoCache
         };
-
-        public static readonly ProcessFetcher Instance = new ProcessFetcher();
-
-        private ProcessFetcher() { }
 
         public (int processId, DemoTypes demoType) GetDemoProcess()
         {
@@ -51,9 +50,7 @@ namespace CountersMonitor
             Console.WriteLine($"Found process '{process.ProcessName}' with ProcessID:{process.Id}");
             Console.WriteLine(new string('-', 30));
 
-            var demoType = process.ProcessName.Contains(LRUInMemoryCache) ?
-                DemoTypes.InMemoryLRU :
-                DemoTypes.RedisLRU;
+            var demoType = GetDemoType(process.ProcessName);
 
             return (process.Id, demoType);
         }
@@ -67,6 +64,17 @@ namespace CountersMonitor
             catch (ArgumentException)
             {
                 return null;
+            }
+        }
+
+        private DemoTypes GetDemoType(string processName)
+        {
+            switch (processName)
+            {
+                case string a when a.Contains(LRUInMemoryCache): return DemoTypes.InMemoryLRU;
+                case string b when b.Contains(RedisLRUCache): return DemoTypes.RedisLRU;
+                case string c when c.Contains(NoCache): return DemoTypes.NoCacheCollectDistribution;
+                default: throw new NotSupportedException($"Process with name {processName} is not supported");
             }
         }
     }

@@ -11,7 +11,7 @@ namespace Reusables.Monitoring
 {
     public class ProductsStatsProcessor : BackgroundService
     {
-        private static readonly TimeSpan LoopInterval = TimeSpan.FromMinutes(2); // TODO config ?
+        private static readonly TimeSpan LoopInterval = TimeSpan.FromMinutes(3); // TODO config ?
 
         private readonly IProductsStatsAggregator _statsAggregator;
         private readonly IServiceProvider _serviceProvider;

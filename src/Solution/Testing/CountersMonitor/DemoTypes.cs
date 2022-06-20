@@ -3,6 +3,7 @@
     public enum DemoTypes
     {
         InMemoryLRU,
-        RedisLRU
+        RedisLRU,
+        NoCacheCollectDistribution
     }
 }
