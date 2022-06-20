@@ -11,7 +11,7 @@ namespace Reusables.Monitoring
 {
     public class ProductsStatsProcessor : BackgroundService
     {
-        private static readonly TimeSpan LoopInterval = TimeSpan.FromSeconds(30); // TODO config ?
+        private static readonly TimeSpan LoopInterval = TimeSpan.FromMinutes(2); // TODO config ?
 
         private readonly IProductsStatsAggregator _statsAggregator;
         private readonly IServiceProvider _serviceProvider;
@@ -32,7 +32,10 @@ namespace Reusables.Monitoring
 
                 var stats = _statsAggregator.Flush();
 
+                // TODO refactor variable names
+
                 var matchesCount = stats.Values.OrderByDescending(x => x).ToArray();
+                var workingSetCount = matchesCount.Length;
                 var totalMatches = Sum(matchesCount);
                 var matchesCountMemory = matchesCount.AsMemory();
 
@@ -51,7 +54,8 @@ namespace Reusables.Monitoring
                     range_15percent,
                     range_20percent,
                     range_30percent,
-                    range_50percent
+                    range_50percent,
+                    workingSetCount
                     );
 
                 var range_5percentFromTotal = GetPercentFromTotal(matchesCountMemory, totalProductsCount, 5, totalMatches);
@@ -61,13 +65,14 @@ namespace Reusables.Monitoring
                 var range_30percentFromTotal = GetPercentFromTotal(matchesCountMemory, totalProductsCount, 30, totalMatches);
                 var range_50percentFromTotal = GetPercentFromTotal(matchesCountMemory, totalProductsCount, 50, totalMatches);
 
-                ProductsStatsEventSource.Log.SetStats(
+                ProductsStatsEventSource.Log.SetStatsFromTotal(
                     range_5percentFromTotal,
                     range_10percentFromTotal,
                     range_15percentFromTotal,
                     range_20percentFromTotal,
                     range_30percentFromTotal,
-                    range_50percentFromTotal
+                    range_50percentFromTotal,
+                    totalProductsCount
                     );
 
                 var dateAfter = DateTime.UtcNow;
@@ -78,6 +83,12 @@ namespace Reusables.Monitoring
 
         private double GetPercent(Memory<int> allMatches, int percent, int totalMatches)
         {
+            if (allMatches.Length == 0)
+                return 0;
+
+            if (totalMatches == 0)
+                return 0;
+
             (int start, int length) percentageRange = (0, (int)Math.Floor(allMatches.Length * (double)percent / 100));
             var segment = allMatches.Span.Slice(percentageRange.start, percentageRange.length);
 
@@ -87,6 +98,15 @@ namespace Reusables.Monitoring
 
         private double GetPercentFromTotal(Memory<int> allMatches, int totalProductsCount, int percent, int totalMatches)
         {
+            if (allMatches.Length == 0)
+                return 0;
+
+            if (totalProductsCount == 0)
+                return 0;
+
+            if (totalMatches == 0)
+                return 0;
+
             var smallLength = allMatches.Length;
             var lengthFromTotal = (int)Math.Floor(totalProductsCount * (double)percent / 100);
             (int start, int length) percentageRange = (0, lengthFromTotal > smallLength ? smallLength : lengthFromTotal);
@@ -99,7 +119,7 @@ namespace Reusables.Monitoring
         private double GetPercentFromTotal(Span<int> segment, int totalMatches)
         {
             var segmentTotal = Sum(segment);
-            var percentageFromTotal = segmentTotal / totalMatches * 100;
+            var percentageFromTotal = segmentTotal / (double)totalMatches * 100;
             return percentageFromTotal;
         }
 

@@ -9,12 +9,16 @@ namespace Reusables.Monitoring
     {
         public static readonly ProductsStatsEventSource Log = new ProductsStatsEventSource();
 
+        private int _workingSetItems = 0;
+
         private double _5PercentRate = 0;
         private double _10PercentRate = 0;
         private double _15PercentRate = 0;
         private double _20PercentRate = 0;
         private double _30PercentRate = 0;
         private double _50PercentRate = 0;
+
+        private int _totalItemsCount = 0;
 
         private double _5PercentFromTotalRate = 0;
         private double _10PercentFromTotalRate = 0;
@@ -23,12 +27,16 @@ namespace Reusables.Monitoring
         private double _30PercentFromTotalRate = 0;
         private double _50PercentFromTotalRate = 0;
 
+        private PollingCounter _workingSetCounter;
+
         private PollingCounter _5PercentCounter;
         private PollingCounter _10PercentCounter;
         private PollingCounter _15PercentCounter;
         private PollingCounter _20PercentCounter;
         private PollingCounter _30PercentCounter;
         private PollingCounter _50PercentCounter;
+
+        private PollingCounter _totalItemsCountCounter;
 
         private PollingCounter _5PercentFromTotalCounter;
         private PollingCounter _10PercentFromTotalCounter;
@@ -48,7 +56,8 @@ namespace Reusables.Monitoring
             double _15percentRate,
             double _20percentRate,
             double _30percentRate,
-            double _50percentRate
+            double _50percentRate,
+            int workingSetITems
             )
         {
             Interlocked.Exchange(ref _5PercentRate, _5percentRate);
@@ -57,6 +66,7 @@ namespace Reusables.Monitoring
             Interlocked.Exchange(ref _20PercentRate, _20percentRate);
             Interlocked.Exchange(ref _30PercentRate, _30percentRate);
             Interlocked.Exchange(ref _50PercentRate, _50percentRate);
+            Interlocked.Exchange(ref _workingSetItems, workingSetITems);
         }
 
         public void SetStatsFromTotal(
@@ -65,7 +75,8 @@ namespace Reusables.Monitoring
             double _15percentRate,
             double _20percentRate,
             double _30percentRate,
-            double _50percentRate
+            double _50percentRate,
+            int totalItemsCount
             )
         {
             Interlocked.Exchange(ref _5PercentFromTotalRate, _5percentRate);
@@ -74,18 +85,23 @@ namespace Reusables.Monitoring
             Interlocked.Exchange(ref _20PercentFromTotalRate, _20percentRate);
             Interlocked.Exchange(ref _30PercentFromTotalRate, _30percentRate);
             Interlocked.Exchange(ref _50PercentFromTotalRate, _50percentRate);
+            Interlocked.Exchange(ref _totalItemsCount, totalItemsCount);
         }
 
         protected override void OnEventCommand(EventCommandEventArgs command)
         {
             if (command.Command == EventCommand.Enable)
             {
+                _workingSetCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.WorkingSetItemsCount, this, () => _workingSetItems);
+
                 _5PercentCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.RequestQuota_5Percent, this, () => _5PercentRate);
                 _10PercentCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.RequestQuota_10Percent, this, () => _10PercentRate);
                 _15PercentCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.RequestQuota_15Percent, this, () => _15PercentRate);
                 _20PercentCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.RequestQuota_20Percent, this, () => _20PercentRate);
                 _30PercentCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.RequestQuota_30Percent, this, () => _30PercentRate);
                 _50PercentCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.RequestQuota_50Percent, this, () => _50PercentRate);
+
+                _totalItemsCountCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.TotalItemsCount, this, () => _totalItemsCount);
 
                 _5PercentFromTotalCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.RequestQuota_FromTotal_5Percent, this, () => _5PercentFromTotalRate);
                 _10PercentFromTotalCounter ??= new PollingCounter(CountersConsts.Metrics.ProductsRequestStats.RequestQuota_FromTotal_10Percent, this, () => _10PercentFromTotalRate);
@@ -98,6 +114,9 @@ namespace Reusables.Monitoring
 
         protected override void Dispose(bool disposing)
         {
+            _workingSetCounter?.Dispose();
+            _workingSetCounter = null;
+
             _5PercentCounter?.Dispose();
             _5PercentCounter = null;
 
@@ -116,6 +135,9 @@ namespace Reusables.Monitoring
             _50PercentCounter?.Dispose();
             _50PercentCounter = null;
 
+
+            _totalItemsCountCounter?.Dispose();
+            _totalItemsCountCounter = null;
 
             _5PercentFromTotalCounter?.Dispose();
             _5PercentFromTotalCounter = null;

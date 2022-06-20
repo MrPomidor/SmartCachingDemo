@@ -26,7 +26,7 @@ namespace Reusables.Monitoring
 
         public void ProductRequested(long productId)
         {
-            _stats.AddOrUpdate(productId, 0, (key, oldValue) => oldValue++);
+            _stats.AddOrUpdate(productId, 1, (key, oldValue) => oldValue + 1);
         }
 
         private ConcurrentDictionary<long, int> CreateNewStats()

@@ -30,6 +30,8 @@
 
             public static class ProductsRequestStats
             {
+                public const string WorkingSetItemsCount = "count-workingset";
+
                 public const string RequestQuota_5Percent = "requestquota-five-percents";
                 public const string RequestQuota_10Percent = "requestquota-ten-percents";
                 public const string RequestQuota_15Percent = "requestquota-fifteen-percents";
@@ -37,12 +39,14 @@
                 public const string RequestQuota_30Percent = "requestquota-thirty-percents";
                 public const string RequestQuota_50Percent = "requestquota-fifty-percents";
 
-                public const string RequestQuota_FromTotal_5Percent =  "requestquota-fromtotal-five-percents";
-                public const string RequestQuota_FromTotal_10Percent = "requestquota-fromtotal-ten-percents";
-                public const string RequestQuota_FromTotal_15Percent = "requestquota-fromtotal-fifteen-percents";
-                public const string RequestQuota_FromTotal_20Percent = "requestquota-fromtotal-twenty-percents";
-                public const string RequestQuota_FromTotal_30Percent = "requestquota-fromtotal-thirty-percents";
-                public const string RequestQuota_FromTotal_50Percent = "requestquota-fromtotal-fifty-percents";
+                public const string TotalItemsCount = "count-totalitems";
+
+                public const string RequestQuota_FromTotal_5Percent = "fromtota-requestquotal-five-percents";
+                public const string RequestQuota_FromTotal_10Percent = "fromtotal-requestquota-ten-percents";
+                public const string RequestQuota_FromTotal_15Percent = "fromtotal-requestquota-fifteen-percents";
+                public const string RequestQuota_FromTotal_20Percent = "fromtotal-requestquota-twenty-percents";
+                public const string RequestQuota_FromTotal_30Percent = "fromtotal-requestquota-thirty-percents";
+                public const string RequestQuota_FromTotal_50Percent = "fromtotal-requestquota-fifty-percents";
             }
         }
     }
