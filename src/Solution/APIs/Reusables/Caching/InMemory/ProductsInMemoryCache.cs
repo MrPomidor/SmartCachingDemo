@@ -6,9 +6,9 @@ namespace Reusables.Caching.InMemory
 {
     public class ProductsInMemoryCache : IProductsCache
     {
-        //private const int Capacity = 10_000;
+        private const int Capacity = 10_000;
         //private const int Capacity = 100_000;
-        private const int Capacity = 20_000;
+        //private const int Capacity = 20_000;
         private readonly TimeSpan TTL = TimeSpan.FromSeconds(30);
 
         private readonly LRUCache<long, Product> _products;
