@@ -54,13 +54,13 @@ var rareRequestedStep = Step.Create("Get Rare Requested Items", clientFactory, r
 var oftenRequestedScenario = ScenarioBuilder.CreateScenario("Often Requested Items", oftenRequestedStep)
     .WithWarmUpDuration(warmupTime)
     .WithLoadSimulations(
-        LoadSimulation.NewInjectPerSec(_rate: 2500, _during: timeToRun)
+        LoadSimulation.NewInjectPerSec(_rate: 2700, _during: timeToRun)
     );
 
 var rareRequestedScenario = ScenarioBuilder.CreateScenario("Rare Requested Items", rareRequestedStep)
     .WithWarmUpDuration(warmupTime)
     .WithLoadSimulations(
-        LoadSimulation.NewInjectPerSec(_rate: 2500, _during: timeToRun)
+        LoadSimulation.NewInjectPerSec(_rate: 2700, _during: timeToRun)
     );
 
 NBomberRunner
