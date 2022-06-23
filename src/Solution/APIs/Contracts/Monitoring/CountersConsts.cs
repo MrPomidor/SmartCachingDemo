@@ -32,7 +32,7 @@
             {
                 public const string WorkingSetItemsCount = "count-workingset";
 
-                public const string RequestQuota_5Percent = "requestquota-five-percents";
+                public const string RequestQuota_5Percent  = "requestquota-five-percents";
                 public const string RequestQuota_10Percent = "requestquota-ten-percents";
                 public const string RequestQuota_15Percent = "requestquota-fifteen-percents";
                 public const string RequestQuota_20Percent = "requestquota-twenty-percents";
@@ -41,7 +41,7 @@
 
                 public const string TotalItemsCount = "count-totalitems";
 
-                public const string RequestQuota_FromTotal_5Percent = "fromtota-requestquotal-five-percents";
+                public const string RequestQuota_FromTotal_5Percent  = "fromtotal-requestquota-five-percents";
                 public const string RequestQuota_FromTotal_10Percent = "fromtotal-requestquota-ten-percents";
                 public const string RequestQuota_FromTotal_15Percent = "fromtotal-requestquota-fifteen-percents";
                 public const string RequestQuota_FromTotal_20Percent = "fromtotal-requestquota-twenty-percents";

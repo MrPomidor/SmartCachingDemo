@@ -76,7 +76,7 @@ namespace UnitTests
         [Fact(Skip = "Manual running only")]
         public async Task SetRedisMaxMemory()
         {
-            const int maxMemoryMb = 100;
+            const int maxMemoryMb = 256;
 
             await _redisManager.SetMaxMemory(maxMemoryMb);
 

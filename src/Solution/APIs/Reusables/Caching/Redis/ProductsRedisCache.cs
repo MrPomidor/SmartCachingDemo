@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Reusables.Caching.InMemory;
 using Reusables.Storage.Entities;
 using Reusables.Utils;
 using StackExchange.Redis;

@@ -32,7 +32,7 @@ namespace UnitTests.Math
         [InlineData(5_000, 50, 0.5)] // 0.0002 - all items have equal probability (uniform distribution)
         [InlineData(5_000, 20, 0.8)] // 0.0008 - 20 percent of items have 80 percent probability (Pareto distribution)
 
-        [InlineData(1_000_000, 20, 77.93)] // 0.0003897
+        [InlineData(1_000_000, 20, 81.027)] // 0.0004051
         public void CalculateItemAppearanceProbability(int totalItems, int oftenRequestedGroupSizePercent, double oftenRequestedGroupProbability)
         {
             // 1 = oftenRequestedGroupProbability + rareRequestedGroupProbability
@@ -62,8 +62,8 @@ namespace UnitTests.Math
         [InlineData(3, 0.0002)] // 10001-19999 - greater then amount of items in set (5000), does not make sense to apply LRU cache
         [InlineData(3, 0.0008)] // 2500-4999 - less then amount of items in set (5000), makes sense to apply LRU cache
 
-        [InlineData(2, 0.0003897)] // 2567-7693 - less then amount of items in set (1_000_000), makes sense to apply LRU cache
-        [InlineData(3, 0.0003897)] // 5133-10263 - less then amount of items in set (1_000_000), makes sense to apply LRU cache
+        [InlineData(3, 0.0004051)] // 4938-9873 - less then amount of items in set (1_000_000), makes sense to apply LRU cache
+        [InlineData(4, 0.0004051)] // 7406-12341 - less then amount of items in set (1_000_000), makes sense to apply LRU cache
         public void CalculateNumberOfTakesForMatchCount(int desiredNumberOfMatches, double successProbability)
         {
             // np - (1 - p) < T
