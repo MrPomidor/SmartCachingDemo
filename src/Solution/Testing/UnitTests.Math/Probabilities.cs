@@ -67,7 +67,7 @@ namespace UnitTests.Math
         public void CalculateNumberOfTakesForMatchCount(int desiredNumberOfMatches, double successProbability)
         {
             // np - (1 - p) < T
-            // mp + (1 - p) > T
+            // np + (1 - p) > T
 
             // n ?
 
